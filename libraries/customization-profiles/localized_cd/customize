@@ -43,12 +43,12 @@ function remove_packages()
 function run_console()
 {
 	echo "Starting console application..."
-	
+
 	CONSOLE_APP=`which konsole`
 	CONSOLE_APP_OPTIONS=(--caption "UCK customization console" -e /bin/bash)
 	if [ "$CONSOLE_APP" = "" ]; then
 		CONSOLE_APP=`which gnome-terminal`
-		CONSOLE_APP_OPTIONS=(-t "UCK customization console" -e /bin/bash)
+		CONSOLE_APP_OPTIONS=() #removed to ubuntu >= 15:10: (-t "UCK customization console" -e /bin/bash)
 	fi
 	if [ "$CONSOLE_APP" = "" ]; then
 		CONSOLE_APP=`which xfce4-terminal`
@@ -62,7 +62,7 @@ function run_console()
 		CONSOLE_APP=`which xterm`
 		CONSOLE_APP_OPTIONS=(-title "UCK customization console" -e /bin/bash)
 	fi
-	
+
 	if [ "$CONSOLE_APP" = "" ]; then
 		dialog_msgbox "Failure" "Unable to find any console application"
 	else
@@ -106,7 +106,7 @@ if [ -n "$LIVECD_LANGS" ]; then
 		# Add language specific packages not releated to kde or gnome
 		add=`echo "$REPO_LANGS" | grep -- -"$l" | grep -Ev "kde|gnome"`
 		PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL $add"
-	
+
 		# Add desktop specific language packages
 		if [ -n "$DESKTOP_FLAVOURS" ]; then
 			for f in $DESKTOP_FLAVOURS; do
@@ -114,17 +114,17 @@ if [ -n "$LIVECD_LANGS" ]; then
 				PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL $add"
 			done
 		fi
-	
+
 		if [ -z "$LANGPACKS_CONCATENATED" ]; then
 			LANGPACKS_CONCATENATED="$l"
 		else
 			LANGPACKS_CONCATENATED="$LANGPACKS_CONCATENATED|$l"
 		fi
 	done
-	
+
 	install_packages $PACKAGES_TO_INSTALL ||
 		failure "Installing language packs failed, error=$?"
-	
+
 	# NOTE:	we first install selected language packs, then remove others as
 	#	installing a language pack might pull in packages that were not
 	#	previously present
